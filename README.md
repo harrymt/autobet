@@ -1,0 +1,4 @@
+autobet
+=======
+
+Bet automatically
