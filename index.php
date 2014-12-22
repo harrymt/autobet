@@ -8,6 +8,12 @@
   </head>
 <body>
 
+  <div>
+<!--     <h3>PHP START</h3>
+    < ?php include 'retrieve.php'; ? >
+    <h3>PHP END</h3> -->
+  </div>
+
   <h2>WARNING Cross origin resource sharing will need to be enabled to use this</h2>
   <h3>Get <a target="_blank" href="https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en">a chrome extension</a> as a work around </h3>
   <p>Data extracted <a href='http://odds.football-data.co.uk/football/england/premier-league/' target="_blank">from this site</a></p>
