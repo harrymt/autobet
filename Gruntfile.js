@@ -10,6 +10,8 @@ var copyCSS = 'cp ' + maincss + ' ' + releasePath + '/' + maincss;
 var copyJS = 'cp ' + mainjs + ' ' + releasePath + '/' + mainjs;
 var copyIndex = 'cp index.php ' + releasePath + '/index.php';
 var copyRetrieve = 'cp retrieve.php ' + releasePath + '/retrieve.php';
+var copyScrape = 'cp scrapeTools.php ' + releasePath + '/scrapeTools.php';
+var copyPhpSetup = 'cp phpsetup.php ' + releasePath + '/phpsetup.php';
 var scpRelease = 'scp -r ' + releasePath + ' uploader@178.62.121.34:/var/www/html';
 
 module.exports = function(grunt) {
@@ -23,7 +25,7 @@ module.exports = function(grunt) {
       multiple: {
         command: [
           // Make a new release, overwrite release folder
-          copyCSS, copyJS, copyRetrieve, copyIndex, scpRelease // upload
+          copyCSS, copyJS, copyRetrieve, copyScrape, copyPhpSetup, copyIndex, scpRelease // upload
         ].join('&&')
       }
     },

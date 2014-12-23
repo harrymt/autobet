@@ -1,49 +1,30 @@
 <?php
 
-// Where the php.ini file is being read from
-// echo phpinfo();
-// Error reporting
-ini_set('display_startup_errors', 1);
-ini_set('display_errors', 1);
-error_reporting(-1);
-date_default_timezone_set("UTC");
-echo "UTC: " . time() . '<br>';
+    // To convert fractional odds to decimal,
+    // divide the first figure by the second figure
+    // add 1.00 (so 11/4 = 2.75, then add 1.00 = 3.75).
+    function fractionalOddsToDecimal($fractionalOdds) {
+        $pieces = explode("/", $fractionalOdds);
+        $decimalOdds = 1.00 + ($pieces[0] / $pieces[1]);
+        return $decimalOdds;
+    }
 
-// Build the header, the content-type can also be application/json if needed
-$header[] = 'Content-length: 0';
-$header[] = 'Content-type: application/json';
-$header[] = 'Authorization: Basic ' . base64_encode("HM750432:gxI@99VliM");
+    $url = 'http://odds.football-data.co.uk/football/england/premier-league/round-18/chelsea-v-west-ham/match-result/all-odds';
 
-// Get cURL resource
-$curl = curl_init();
+    $scraped_page = curl($url);
 
-// Set some options - we are passing in a useragent too here
-curl_setopt_array($curl, array(
-    CURLOPT_URL => 'https://api.pinnaclesports.com/v1/feed?sportid=29',
-    // CURLOPT_RETURNTRANSFER => 1,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_HTTPHEADER => $header,
-    CURLOPT_CUSTOMREQUEST => 'GET'
-));
-echo file_get_contents('https://api.pinnaclesports.com/v1/feed?sportid=29');
+    // Title
+    echo "Title : " . scrape_between($scraped_page, "<title>", "</title>") . "<br>";
 
-echo '<br>Curl : ' . var_dump($curl) . '<br>';
+    $scraped_data = scrape_between($scraped_page, "<div id=\"oddsContainer\">", "<div id=\"floatArea\"></div>");
 
-// This fetches the initial feed result. Next we will fetch the update using the fdTime value and the last URL parameter
-$resp = curl_exec($curl);
 
-if(!curl_exec($curl)){
-    echo 'Error: "' . curl_error($curl) . '" - Code: ' . curl_errno($curl) . '<br>';
-}
-
-echo 'resp : ';
-echo var_dump($resp);
-
-// Close request to clear up some resources
-curl_close($curl);
-
-// You need to pick an XML library that is suitable for you, in this case I am using the built-in simple XML feature of PHP.
-//$xmlDocument = simplexml_load_string($resp);
-// echo $xmlDocument;
-
+    // Find all odds in scraped_data
+    // Loop around the results
+    // Get the odds
+    // Put them through fractional Odds to Decimal
+    // Print out both
+    // Get the betfair shop ... place to place the bet
+    // print that out
+    echo trim($scraped_data);
 ?>
