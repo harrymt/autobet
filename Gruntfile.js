@@ -1,5 +1,4 @@
 
-
 // FTP and version control paths
 var releasePath = "release/autobet";
 var cssBuild = "css/build"; //
