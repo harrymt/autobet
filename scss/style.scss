@@ -1,0 +1,136 @@
+
+@import 'reset';
+
+
+//
+// GLOBALS
+//
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    background: #444;
+    font: 500 16px Avenir, sans-serif;
+    line-height: 1;
+}
+
+//
+// INTRO
+//
+
+.intro-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: .7;
+    background: rgba(0,0,0,.9);
+    background: -webkit-radial-gradient(60% 60%, ellipse closest-corner, #3c3c3c 1%, rgba(0,0,0,0.3) 100%);
+    background: -moz-radial-gradient(60% 50%, ellipse closest-corner, #000 1%, rgba(0,0,0,0.3) 100%);
+    background: -ms-radial-gradient(50% 50%, ellipse closest-corner, #000 1%, rgba(0,0,0,0.3) 100%);
+    background: radial-gradient(60% 60%, ellipse closest-corner, #96bebe 1%, rgba(0,0,0,0.3) 100%);
+    filter: alpha(opacity=30);
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    -o-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.intro-pitch h2 {
+    color: #fff;
+    font-size: 55px;
+    font-weight: normal;
+    line-height: 120%;
+}
+
+.intro-pitch p {
+    color: rgba(255, 255, 255, .7);
+    display: block;
+    font-size: 25px;
+    font-weight: normal;
+}
+
+.happy-day {
+    color: rgba(255, 255, 255, .36);
+    cursor: normal;
+    display: block;
+    padding-top: 20px;
+    text-decoration: none;
+}
+
+
+//
+// INTRO
+//
+
+.intro {
+    background-color: #1a2a2b;
+    background-image: url('../img/bg_back.jpg');
+    background-size: cover;
+    height: 100%;
+    position: relative;
+    text-align: center;
+    width: 100%;
+}
+
+.intro-pitch {
+    display: table;
+    height: 100%;
+    line-height: 2.5em;
+    margin: 0 auto;
+    max-width: 1080px;
+    position: relative;
+    vertical-align: middle;
+    width: 100%;
+    z-index: 30;
+
+    h2 {
+        line-height: 1.3em;
+        padding: 0 10%;
+    }
+
+    p {
+        font-size: 20px;
+        line-height: 100%;
+        margin-bottom: 1.3em;
+    }
+
+    .avatar {
+        border-radius: 50%;
+        box-shadow: 1px 1px 8px rgba(0, 0, 0, .5);
+    }
+}
+
+.intro-inner {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.intro-pitch-inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#player-bio {
+    a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+}
