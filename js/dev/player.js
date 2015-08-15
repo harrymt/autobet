@@ -1,10 +1,13 @@
 
 $(function() {
+    scrapeData();
+
     var match = { game: '', odds: '' }; // Define a match object
 
     // Get matches
     match.game = 'Swansea v United'; match.odds = '1.2';
     var matches = [match];
+
 
     // Print matches
     printTable(matches);

@@ -1,13 +1,11 @@
 
 function scrapeData() {
-  resetDisplayedData();
   var rootURL = "http://odds.football-data.co.uk/football/england/premier-league/";
 
   // Get match URL
-  var match = $('#matchURL').val();
-  if ( match === undefined || match === "") { console.log('default match'); match = "round-16/burnley-v-southampton/"; }
-
-  var url = rootURL + match + "/match-result/all-odds";
+  var match = "round-16/burnley-v-southampton/";
+  var url = rootURL + match + "match-result/all-odds";
+  console.log("Betting URL " + url);
 
   $("#data").load(url + " .allOdds > .contents", function( response, status, xhr ) {
     console.log("Data loaded.");
@@ -15,19 +13,14 @@ function scrapeData() {
   });
 }
 
-function resetDisplayedData() {
-  $('#odds').html(""); // Reset odds
-  $('#console').text(""); // Reset console
-}
-
 function displayOdds(odds) {
   var i = 0;
 
   if (odds.length == 1) {
-    $("#console").text("No Bets found");
+    $(".intro").append("No Bets found");
   }
   var o = "<pre class='prettyprint'>" + JSON.stringify(odds, null, 4) + "</pre>";
-  $('#odds').html(o);
+  $('.intro').append(o);
 }
 
 // Things we return
