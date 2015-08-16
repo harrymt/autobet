@@ -1,7 +1,4 @@
 
-@import 'reset';
-
-
 //
 // GLOBALS
 //
@@ -12,7 +9,8 @@ body {
 }
 
 body {
-    background-color: #fff; // #5a2222; // #444
+    background-color: #555; // #5a2222; // #444
+    color: #fff;
     font: 500 16px Avenir, sans-serif;
     line-height: 1;
     text-align: center;
@@ -23,8 +21,44 @@ a {
 }
 
 h1 {
-    color: #555;
-    margin: 0;
+    font-size: 23px;
+    font-weight: 400;
+}
+
+table {
+    background-color: #7b7b7b;
+    border: 1px solid;
+    border-collapse: collapse; // Means we can have tr borders
+    color: #fff;
+    font-size: 15px;
+    line-height: 1.6em;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    opacity: .9;
+    padding: 5px;
+    text-align: left;
+
+    th,
+    td {
+        border-left: 1px solid;
+        padding: 5px;
+    }
+
+    th {
+        border-right: 1px solid;
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    tr {
+        border-bottom: 1px solid #555;
+    }
+
+    tr:nth-child(even) {
+        background-color: #656565;
+    }
 }
 
 // Added to sortable tables
@@ -88,31 +122,6 @@ h1 {
 
 .intro-pitch-inner {
     display: table-cell;
+    padding: 20px;
     vertical-align: middle;
-
-    table {
-        background-color: #7b7b7b;
-        border: 1px solid;
-        color: #fff;
-        font-size: 15px;
-        line-height: 1.6em;
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 10px;
-        opacity: .9;
-        padding: 5px;
-        text-align: left;
-
-        th {
-            border-left: 1px solid;
-            border-right: 1px solid;
-            font-size: 12px;
-            font-weight: normal;
-            padding: 5px;
-        }
-    }
 }
-
-
-
-

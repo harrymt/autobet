@@ -22,7 +22,7 @@ function GetMatches() {
     var matches = []; // The output, an array of matches
 
     // Get data from LHS table
-    var data = ['', '', ''];
+    var data = [];
 
     // Add the match information
     for (var i = 0; i < data.length; i++) {
