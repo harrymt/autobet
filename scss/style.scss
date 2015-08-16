@@ -27,6 +27,12 @@ h1 {
     margin: 0;
 }
 
+// Added to sortable tables
+.sortable th:hover {
+    cursor: pointer;
+    opacity: .6;
+}
+
 //
 // INTRO
 //
@@ -106,4 +112,7 @@ h1 {
         }
     }
 }
+
+
+
 
