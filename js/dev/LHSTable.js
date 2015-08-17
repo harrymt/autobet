@@ -3,13 +3,144 @@ var T = 19; // Teams in League - 1
 var LAS = 1.49; // League Attack Strength
 var LDS = 1.1; // League Defence Strength (Was 1.16)
 
-$(function() {
-    PrintOdds(); // From LHS Table
-    PrintFixtures(); // From RHS Table
-});
+var HomeAvgGoals = 1.49;
+var AwayAvgGoals = 1.11;
 
-function PrintOdds() {
-      var keyTable = $('<table>').append(
+function getAttackStrength(goalsScored) {
+    return (goalsScored / T) / LAS;
+}
+
+function getDefenceStrength(goalsConceded) {
+    return (goalsConceded / T) / LDS;
+}
+
+function getAwayTeamGoals(matches, hometeam, awayteam) {
+    var hometeamStats = searchArray(matches, 'team', hometeam);
+    var awayteamStats = searchArray(matches, 'team', awayteam);
+    return (awayteamStats.awayAttStr * hometeamStats.homeDefStr * AwayAvgGoals).toFixed(2);
+}
+
+//
+// Calculate Home Team goals
+// HomeTeamGoals = HomeTeamAtt x AwayTeamDef x HomeAvgGoals
+//
+function getHomeTeamGoals(matches, hometeam, awayteam) {
+    var hometeamStats = searchArray(matches, 'team', hometeam);
+    var awayteamStats = searchArray(matches, 'team', awayteam);
+    return (hometeamStats.homeAttStr * awayteamStats.awayDefStr * HomeAvgGoals).toFixed(2);
+}
+
+function processResults(matches) {
+    printConfigTable(); // Displays config values used
+    displayMatches(matches); // Top Table (LHS)
+    fetchFixtures(displayFixtures, matches); // Bottom Table (RHS)
+
+    // End loading spinner
+    $('.js-loading-spinner').css('display', 'none');
+}
+
+function fetchGoalStats(callback) {
+    var matches = [];
+
+    // http://www.soccerstats.com/team_trends.asp?league=england&pmtype=average
+    var url = "https://api.import.io/store/data/4d2918a1-7edf-4ddb-8ad2-bf879b0483b5/_query?input/webpage/url=http%3A%2F%2Fwww.soccerstats.com%2Fteam_trends.asp%3Fleague%3Dengland%26pmtype%3Daverage&_user=24f4e2a3-0b63-4a25-bd86-ee8bc4b28225&_apikey=24f4e2a30b634a25bd86ee8bc4b28225f6f10355b63ffc38bf842e973031e321fe888781eacb90809cdae1358dc9df612d1988b05ceca52c5e73bb19329ee23bdbb4dde347168aea8123b8e69f752817";
+    return $.getJSON(url , function( data ) {
+
+      for(i = 0; i < data.results.length; i++) {
+            matches.push({
+                team: data.results[i]['link/_text'],
+                homeScored: data.results[i].value_1,
+                homeConceded: data.results[i].value_2,
+                awayScored: data.results[i].value_3,
+                awayConceded: data.results[i].value_4,
+                homeAttStr: getAttackStrength(data.results[i].value_1).toFixed(2),
+                homeDefStr: getDefenceStrength(data.results[i].value_2).toFixed(2),
+                awayAttStr: getAttackStrength(data.results[i].value_3).toFixed(2),
+                awayDefStr: getDefenceStrength(data.results[i].value_4).toFixed(2)
+            });
+        }
+
+        callback(matches);
+    });
+}
+
+function searchArray(array, objectName, searchTerm) {
+    var result = $.grep(array, function(e) { return e[objectName] == searchTerm; });
+    if (result.length === 0) { // not found
+      return "ERROR: " + searchTerm + " not found";
+    } else if (result.length == 1) {
+        return result[0];
+    } else { // multiple items found
+      return "ERROR: 1+ items found";
+    }
+}
+
+function fetchFixtures(callback, matches) {
+    var fixtures = [];
+    var gameweekMatches = [];
+    var gameweekNumber = 1;
+    // fantasy.premierleague.com/fixtures/1/
+    return $.ajax({
+        url: "https://www.kimonolabs.com/api/5ngo4jjk?apikey=RbOBR2dkBMXKj1pxkxWWUYEJperNuBsv",
+        crossDomain: true,
+        dataType: 'jsonp',
+        success: function(response) {
+            for(i = 0; i < response.results.match.length; i++) {
+
+                var game = response.results.match[i];
+
+                var hometeamresult = 0, awayteamresult = 0;
+                 if (game.result == "v") {
+                    hometeamresult = "-"; awayteamresult = "-";
+                } else {
+                    hometeamresult = game.result.split(' - ')[0];
+                    awayteamresult = game.result.split(' - ')[1];
+                }
+
+                gameweekMatches.push({
+                    date: game.date,
+                    hometeam: fixTeam(game.hometeam),
+                    hometeamGoals: getHomeTeamGoals(matches, fixTeam(game.hometeam), fixTeam(game.awayteam)),
+                    awayteam: fixTeam(game.awayteam),
+                    awayteamGoals: getAwayTeamGoals(matches, fixTeam(game.hometeam), fixTeam(game.awayteam)),
+                    hometeamresult: hometeamresult,
+                    awayteamresult: awayteamresult,
+                    correctScore: 'N', correctResult: 'N', overOrUnder: 'N'
+                });
+
+                if(i % 10 === 0 && i !== 0) {
+                    fixtures.push({
+                        matches: gameweekMatches,
+                        gameweek: gameweekNumber
+                    });
+                    gameweekMatches = [];
+                }
+            }
+
+            callback(fixtures);
+        }
+    });
+}
+
+function fixTeam(teamName) {
+    switch(teamName) {
+        case "Crystal Palace":  return "Crystal Pala.";
+        case "Leicester":   return "Leicester Ci.";
+        case "Man City":    return "Manchester C.";
+        case "Man Utd":     return "Manchester U.";
+        case "Newcastle":   return "Newcastle Utd";
+        case "Norwich":     return "Norwich City";
+        case "Spurs":       return "Tottenham";
+        case "Stoke":       return "Stoke City";
+        case "Swansea":     return "Swansea City";
+        case "West Brom":   return "West Bromwich";
+        case "West Ham":    return "West Ham Utd";
+    }
+    return teamName;
+}
+
+function printConfigTable() {
+    var keyTable = $('<table>').append(
         $('<tr>').append(
             $('<th>').text("Teams in league - 1"),
             $('<th>').text("League Attack Strength"),
@@ -21,7 +152,10 @@ function PrintOdds() {
             $('<td>').text(LDS)
         )
     );
+    $('#js-LHSoutput').append(keyTable);
+}
 
+function displayMatches(ms) {
     var tableHeader = $('<tr>').append(
         $('<th>').text('Team'),
         $('<th>').text('Home Scored'),
@@ -36,58 +170,66 @@ function PrintOdds() {
 
     var table = $('<table>', { class: "sortable"}).append(tableHeader);
 
-    // http://www.soccerstats.com/team_trends.asp?league=england&pmtype=average
-    var url = "https://api.import.io/store/data/4d2918a1-7edf-4ddb-8ad2-bf879b0483b5/_query?input/webpage/url=http%3A%2F%2Fwww.soccerstats.com%2Fteam_trends.asp%3Fleague%3Dengland%26pmtype%3Daverage&_user=24f4e2a3-0b63-4a25-bd86-ee8bc4b28225&_apikey=24f4e2a30b634a25bd86ee8bc4b28225f6f10355b63ffc38bf842e973031e321fe888781eacb90809cdae1358dc9df612d1988b05ceca52c5e73bb19329ee23bdbb4dde347168aea8123b8e69f752817";
-    $.getJSON(url , function( data ) {
-        // End Loading spinner
-        $('.js-loading-spinner').css('display', 'none');
-
-        console.log("Data loaded.");
-        console.log(data);
-        console.log("Found " + data.results.length + " results");
-
-        for(i = 0; i < data.results.length; i++) {
-            var teamName = data.results[i]['link/_text'];
-            var homeScored = data.results[i].value_1;
-            var homeConceded = data.results[i].value_2;
-            var awayScored = data.results[i].value_3;
-            var awayConceded = data.results[i].value_4;
-
-            var tableRow = $('<tr></tr>').append(
-                $('<td>').text(teamName),
-                $('<td>').text(homeScored),
-                $('<td>').text(homeConceded),
-                $('<td>').text(awayScored),
-                $('<td>').text(awayConceded),
-                $('<td>').text(getAttackStrength(homeScored).toFixed(2)),
-                $('<td>').text(getDefenceStrength(homeConceded).toFixed(2)),
-                $('<td>').text(getAttackStrength(awayScored).toFixed(2)),
-                $('<td>').text(getDefenceStrength(awayConceded).toFixed(2))
-            );
-            table.append(tableRow);
-        }
-    });
-
-    console.log(table.html());
-    $('#js-LHSoutput').append(keyTable);
+    for(i = 0; i < ms.length; i++) {
+        var tableRow = $('<tr></tr>').append(
+            $('<td>').text(ms[i].team),
+            $('<td>').text(ms[i].homeScored),
+            $('<td>').text(ms[i].homeConceded),
+            $('<td>').text(ms[i].awayScored),
+            $('<td>').text(ms[i].awayConceded),
+            $('<td>').text(ms[i].homeAttStr),
+            $('<td>').text(ms[i].homeDefStr),
+            $('<td>').text(ms[i].awayAttStr),
+            $('<td>').text(ms[i].awayDefStr)
+        );
+        table.append(tableRow);
+    }
     $('#js-LHSoutput').append(table);
 }
 
-function getAttackStrength(goalsScored) {
-    return (goalsScored / T) / LAS;
+function displayFixtures(fs) {
+    var output = $("<div class='fixtures'></div>");
+
+    for(i = 0; i < fs.length; i++) {
+        output.append($('<h1></h1>').text("Game Week " + fs[i].gameweek));
+
+        var table = $('<table>').append(
+            $('<tr>').append(
+                $("<th>").text('Date'),
+                $("<th>").text('Home'),
+                $("<th>").text('Home Team Goals'),
+                $("<th>").text('Away'),
+                $("<th>").text('Away Team Goals'),
+                $("<th>").text('Home Result'),
+                $("<th>").text('Away Result'),
+                $("<th>").text('Correct Score'),
+                $("<th>").text('Correct Result'),
+                $("<th>").text('Over/Under')
+            )
+        );
+
+        for(j = 0; j < fs[i].matches.length; j++) {
+            var game = fs[i].matches[j];
+
+             var tableRow = $('<tr></tr>').append(
+                $('<td>').text(game.date),
+                $('<td>').text(game.hometeam),
+                $('<td>').text(game.hometeamGoals),
+                $('<td>').text(game.awayteam),
+                $('<td>').text(game.awayteamGoals), //game.awayOdds.toFixed(2)),
+                $('<td>').text(game.hometeamresult),
+                $('<td>').text(game.awayteamresult),
+                $('<td>').text(game.correctScore),
+                $('<td>').text(game.correctResult),
+                $('<td>').text(game.overOrUnder)
+            );
+            table.append(tableRow);
+        }
+        output.append(table);
+    }
+    $('#js-output').append(output);
 }
 
-function getDefenceStrength(goalsConceded) {
-    return (goalsConceded / T) / LDS;
-}
-
-
-
-//
-// Defines the RHS table match
-//
-var RHSmatch = {
-    homeTeam: '', homeOdds: '',
-    awayTeam: 0.0, awayOdds: 0.0,
-    correctScore: false, correctResult: false, overOrUnder: false,
-};
+$(function() {
+    fetchGoalStats(processResults); // Main
+});
