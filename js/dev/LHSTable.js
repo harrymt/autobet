@@ -89,23 +89,35 @@ function fetchFixtures(callback, matches) {
 
                 var game = response.results.match[i];
 
+                var hometeamWinChance = getHomeTeamGoals(matches, fixTeam(game.hometeam), fixTeam(game.awayteam));
+                var awayteamWinChance = getAwayTeamGoals(matches, fixTeam(game.hometeam), fixTeam(game.awayteam));
+
                 var hometeamresult = 0, awayteamresult = 0;
+                var gotCorrectScore = '-';
                  if (game.result == "v") {
                     hometeamresult = "-"; awayteamresult = "-";
                 } else {
                     hometeamresult = game.result.split(' - ')[0];
                     awayteamresult = game.result.split(' - ')[1];
+
+                    console.log('Comparing: HT%[' + hometeamWinChance + '] >= AT%[' + awayteamWinChance + '] && HTScore[' + hometeamresult + '] >= ATScore[' + awayteamresult + ']');
+                    if(hometeamWinChance >= awayteamWinChance && hometeamresult >= awayteamresult ) {
+                        gotCorrectScore = 'Y';
+                    } else {
+                        gotCorrectScore = 'N';
+                    }
                 }
 
                 gameweekMatches.push({
                     date: game.date,
                     hometeam: fixTeam(game.hometeam),
-                    hometeamGoals: getHomeTeamGoals(matches, fixTeam(game.hometeam), fixTeam(game.awayteam)),
+                    hometeamGoals: hometeamWinChance,
                     awayteam: fixTeam(game.awayteam),
-                    awayteamGoals: getAwayTeamGoals(matches, fixTeam(game.hometeam), fixTeam(game.awayteam)),
+                    awayteamGoals: awayteamWinChance,
                     hometeamresult: hometeamresult,
                     awayteamresult: awayteamresult,
-                    correctScore: 'N', correctResult: 'N', overOrUnder: 'N'
+                    correctResult: gotCorrectScore,
+                    correctScore: 'NA', overOrUnder: 'NA'
                 });
 
                 if(i % 10 === 0 && i !== 0) {
@@ -200,13 +212,13 @@ function displayFixtures(fs) {
                 $('<tr>').append(
                     $("<th>").text('Date'),
                     $("<th>").text('Home'),
-                    $("<th>").text('Home Team Goals'),
+                    $("<th>").text('Home Goals%'),
                     $("<th>").text('Away'),
-                    $("<th>").text('Away Team Goals'),
+                    $("<th>").text('Away Goals%'),
                     $("<th>").text('Home Result'),
                     $("<th>").text('Away Result'),
-                    $("<th>").text('Correct Score'),
-                    $("<th>").text('Correct Result'),
+                    $("<th>").text('Score exact?'),
+                    $("<th>").text('Result?'),
                     $("<th>").text('Over/Under')
                 )
             )

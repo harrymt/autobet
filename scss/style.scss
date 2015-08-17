@@ -131,3 +131,86 @@ table {
     cursor: pointer;
     opacity: .6;
 }
+
+
+
+
+// Mobile
+@media (max-width: 500px) {
+    html,
+    body,
+    #save-form,
+    .intro,
+    .intro-pitch {
+        height: auto;
+        margin: 0;
+    }
+
+    .intro-pitch {
+        display: block;
+    }
+
+    .intro-pitch-inner {
+        display: block;
+        padding: 5px;
+    }
+
+    .intro-pitch p {
+        font-size: 20px;
+        margin-bottom: .8em;
+        margin-top: .5em;
+    }
+
+    .intro-inner {
+        bottom: auto;
+        left: auto;
+        position: relative;
+        right: auto;
+        top: auto;
+    }
+
+    .intro-pitch h2 {
+        font-size: 30px;
+        padding: 0;
+    }
+
+    table {
+        font-size: 11px;
+
+        th,
+        td {
+            padding: 3px;
+        }
+    }
+
+    // Hide table columns on mobile
+    #table-stats {
+        td:nth-child(2),
+        th:nth-child(2),
+
+        td:nth-child(3),
+        th:nth-child(3),
+
+        td:nth-child(4),
+        th:nth-child(4),
+
+        td:nth-child(5),
+        th:nth-child(5) {
+            display: none;
+        }
+    }
+
+    // Hide table columns on mobile
+    .fixtures table {
+        td:nth-child(8),
+        th:nth-child(8),
+
+        td:nth-child(9),
+        th:nth-child(9),
+
+        td:nth-child(10),
+        th:nth-child(10) {
+            display: none;
+        }
+    }
+}
