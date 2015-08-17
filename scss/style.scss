@@ -65,11 +65,7 @@ table {
     font-size: 40px !important;
 }
 
-// Added to sortable tables
-.sortable th:hover {
-    cursor: pointer;
-    opacity: .6;
-}
+
 
 //
 // INTRO
@@ -128,4 +124,10 @@ table {
     display: table-cell;
     padding: 20px;
     vertical-align: middle;
+}
+
+// Added to sortable tables
+#table-stats th:hover {
+    cursor: pointer;
+    opacity: .6;
 }

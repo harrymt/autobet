@@ -168,7 +168,7 @@ function displayMatches(ms) {
         $('<th>').text('Away Defence Str')
     );
 
-    var table = $('<table>', { class: "sortable"}).append(tableHeader);
+    var table = $('<table>', { id: "table-stats"}).append(tableHeader);
 
     for(i = 0; i < ms.length; i++) {
         var tableRow = $('<tr></tr>').append(
@@ -185,6 +185,8 @@ function displayMatches(ms) {
         table.append(tableRow);
     }
     $('#js-LHSoutput').append(table);
+
+    sorttable.makeSortable(document.getElementById("table-stats")); // Make table sortable
 }
 
 function displayFixtures(fs) {
@@ -194,17 +196,19 @@ function displayFixtures(fs) {
         output.append($('<h1></h1>').text("Game Week " + fs[i].gameweek));
 
         var table = $('<table>').append(
-            $('<tr>').append(
-                $("<th>").text('Date'),
-                $("<th>").text('Home'),
-                $("<th>").text('Home Team Goals'),
-                $("<th>").text('Away'),
-                $("<th>").text('Away Team Goals'),
-                $("<th>").text('Home Result'),
-                $("<th>").text('Away Result'),
-                $("<th>").text('Correct Score'),
-                $("<th>").text('Correct Result'),
-                $("<th>").text('Over/Under')
+            $('<thead>').append(
+                $('<tr>').append(
+                    $("<th>").text('Date'),
+                    $("<th>").text('Home'),
+                    $("<th>").text('Home Team Goals'),
+                    $("<th>").text('Away'),
+                    $("<th>").text('Away Team Goals'),
+                    $("<th>").text('Home Result'),
+                    $("<th>").text('Away Result'),
+                    $("<th>").text('Correct Score'),
+                    $("<th>").text('Correct Result'),
+                    $("<th>").text('Over/Under')
+                )
             )
         );
 
