@@ -1,11 +1,4 @@
 
-$(function() {
-    var matches = GetMatches();
-
-    // Print matches
-    printTable(matches);
-});
-
 //
 // Defines the RHS table match
 //
@@ -18,53 +11,50 @@ var RHSmatch = {
 //
 // Returns the matches with Odds this gameweek
 //
-function GetMatches() {
-    var matches = []; // The output, an array of matches
-
-    // Get data from LHS table
-    var data = [];
-
-    // Add the match information
-    for (var i = 0; i < data.length; i++) {
-        matches.push({
-            homeTeam: 'Swansea', homeOdds: 1.0,
-            awayTeam: 'United', awayOdds: 1.1,
-            correctScore: false, correctResult: false, overOrUnder: false
-        });
-    }
-    // console.log(matches);
-    return matches;
-}
-
-//
-// Prints matches to output table.
-//
-function printTable(matches) {
+function PrintFixtures() {
     var heading = $('<h1></h1>').text("Game Week 1");
-
     var tableHeader = $('<tr>').append(
+        $("<th>").text('Date'),
         $("<th>").text('Home'),
         $("<th>").text('Odds'),
         $("<th>").text('Away'),
         $("<th>").text('Odds'),
+        $("<th>").text('Result'),
         $("<th>").text('Correct Score'),
         $("<th>").text('Correct Result'),
         $("<th>").text('Over/Under')
     );
 
-    var table = $('<table>').append(tableHeader);
-    for(i = 0; i < matches.length; i++){
-        var tableRow = $('<tr></tr>');
-        tableRow.append($('<td>').text(matches[i].homeTeam));
-        tableRow.append($('<td>').text(matches[i].homeOdds.toFixed(2)));
-        tableRow.append($('<td>').text(matches[i].awayTeam));
-        tableRow.append($('<td>').text(matches[i].awayOdds.toFixed(2)));
-        tableRow.append($('<td>').text(matches[i].correctScore));
-        tableRow.append($('<td>').text(matches[i].correctResult));
-        tableRow.append($('<td>').text(matches[i].overOrUnder));
-        table.append(tableRow);
-    }
-    // console.log(table.html());
-    $('#js-output').append(heading);
-    $('#js-output').append(table);
+    // 1. Get Fixtures
+    var url = "https://www.kimonolabs.com/api/5ngo4jjk?apikey=RbOBR2dkBMXKj1pxkxWWUYEJperNuBsv";
+    $.ajax({
+        url: url,
+        crossDomain: true,
+        dataType: 'jsonp',
+        success: function(response) {
+            console.log("Data loaded.");
+            console.log(response);
+            console.log("Found " + response.results.match.length + " matches");
+
+            var table = $('<table>').append(tableHeader);
+
+            for(i = 0; i < response.results.match.length; i++) {
+                var tableRow = $('<tr></tr>');
+                tableRow.append($('<td>').text(response.results.match[i].date));
+                tableRow.append($('<td>').text(response.results.match[i].hometeam));
+                tableRow.append($('<td>').text('0.0')); //response.results.match[i].homeOdds.toFixed(2)));
+                tableRow.append($('<td>').text(response.results.match[i].awayteam));
+                tableRow.append($('<td>').text('0.0')); //response.results.match[i].awayOdds.toFixed(2)));
+                tableRow.append($('<td>').text(response.results.match[i].result));
+                tableRow.append($('<td>').text('N')); //response.results.match[i].correctScore));
+                tableRow.append($('<td>').text('N')); //response.results.match[i].correctResult));
+                tableRow.append($('<td>').text('N')); //response.results.match[i].overOrUnder));
+                table.append(tableRow);
+            }
+
+            // console.log(table.html());
+            $('#js-output').append(heading);
+            $('#js-output').append(table);
+        }
+    });
 }

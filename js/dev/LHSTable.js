@@ -4,7 +4,12 @@ var LAS = 1.49; // League Attack Strength
 var LDS = 1.1; // League Defence Strength (Was 1.16)
 
 $(function() {
-    var keyTable = $('<table>').append(
+    PrintOdds(); // From LHS Table
+    PrintFixtures(); // From RHS Table
+});
+
+function PrintOdds() {
+      var keyTable = $('<table>').append(
         $('<tr>').append(
             $('<th>').text("Teams in league - 1"),
             $('<th>').text("League Attack Strength"),
@@ -66,7 +71,7 @@ $(function() {
     console.log(table.html());
     $('#js-LHSoutput').append(keyTable);
     $('#js-LHSoutput').append(table);
-});
+}
 
 function getAttackStrength(goalsScored) {
     return (goalsScored / T) / LAS;
