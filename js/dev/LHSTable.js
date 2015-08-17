@@ -111,7 +111,7 @@ function fetchFixtures(callback, matches) {
                 if(i % 10 === 0 && i !== 0) {
                     fixtures.push({
                         matches: gameweekMatches,
-                        gameweek: gameweekNumber
+                        gameweek: gameweekNumber++
                     });
                     gameweekMatches = [];
                 }
