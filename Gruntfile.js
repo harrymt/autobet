@@ -33,7 +33,7 @@ module.exports = function (grunt) {
         separator: ';'
       },
       dist: {
-        src: ['js/dev/jquery.min.js', 'js/dev/sorttable.js', 'js/dev/scrape.js', 'js/dev/LHSTable.js'],
+        src: ['js/dev/jquery.min.js', 'js/dev/sorttable.js', 'js/dev/scraping.js'],
         dest: 'js/main.min.js'
       }
     },
