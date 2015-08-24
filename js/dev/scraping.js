@@ -134,7 +134,7 @@ function fetchFixtures(callback, matches) {
                     correctScore: 'NA', overOrUnder: OverXGoals
                 });
 
-                if(i % 10 === 0 && i !== 0) {
+                if(i % 9 === 0 && i !== 0) {
                     fixtures.push({
                         matches: gameweekMatches,
                         gameweek: gameweekNumber++
