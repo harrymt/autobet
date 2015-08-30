@@ -65,7 +65,7 @@ module.exports = function (grunt) {
 
       javascript: {
         files: ['js/dev/*.js'],
-        tasks: ['concat', 'uglify']
+        tasks: ['concat']
       }
     }
   });
@@ -77,6 +77,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch'); // On file update, do task
   grunt.loadNpmTasks('grunt-serve'); // Local server
 
-  grunt.registerTask('default', ['htmlmin', 'concat', 'uglify', 'sass']);
+  grunt.registerTask('default', ['htmlmin', 'concat', 'sass']);
 
 };
