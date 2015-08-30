@@ -142,7 +142,8 @@ $(function() {
                             hometeamresult: hometeamresult,
                             awayteamresult: awayteamresult,
                             correctResult: gotCorrectScore,
-                            correctScore: 'NA', overOrUnder: OverXGoals
+                            correctScore: 'NA',
+                            overOrUnder: OverXGoals
                         });
                     }
 
@@ -244,7 +245,7 @@ $(function() {
                         $('<th>').text('Away Goals%'),
                         $('<th>').text('Home Result'),
                         $('<th>').text('Away Result'),
-                        $('<th>').text('Score exact?'),
+                        // $('<th>').text('Score exact?'),
                         $('<th>').text('Result?'),
                         $('<th>').text('Over 2.5 Goals')
                     )
@@ -258,7 +259,7 @@ $(function() {
             for(var j = 0; j < fs[i].matches.length; j++) {
                 var game = fs[i].matches[j];
 
-                if(game.correctScore == 'Y') {TotalCorrectScore++;}
+                // if(game.correctScore == 'Y') {TotalCorrectScore++;}
                 if(game.correctResult == 'Y') {TotalCorrectResult++;}
                 if(game.overOrUnder == 'Y') {TotalCorrectOverOrUnder++;}
 
@@ -270,7 +271,7 @@ $(function() {
                     $('<td>').text(game.awayteamGoals),
                     $('<td>').text(game.hometeamresult),
                     $('<td>').text(game.awayteamresult),
-                    $('<td>').text(game.correctScore),
+                    // $('<td>').text(game.correctScore),
                     $('<td>').text(game.correctResult),
                     $('<td>').text(game.overOrUnder)
                 );
@@ -287,7 +288,7 @@ $(function() {
                     $('<td>').text(''),
                     $('<td>').text(''),
                     $('<td>').text('Totals'),
-                    $('<td>').text(TotalCorrectScore + '/' + fs[i].matches.length),
+                    // $('<td>').text(TotalCorrectScore + '/' + fs[i].matches.length),
                     $('<td>').text(TotalCorrectResult + '/' + fs[i].matches.length),
                     $('<td>').text(TotalCorrectOverOrUnder + '/' + fs[i].matches.length)
                 )
@@ -301,7 +302,7 @@ $(function() {
                     $('<td>').text(''),
                     $('<td>').text(''),
                     $('<td>').text('Success'),
-                    $('<td>').text((TotalCorrectScore / fs[i].matches.length).toFixed(2)),
+                    // $('<td>').text((TotalCorrectScore / fs[i].matches.length).toFixed(2)),
                     $('<td>').text((TotalCorrectResult / fs[i].matches.length).toFixed(2)),
                     $('<td>').text((TotalCorrectOverOrUnder / fs[i].matches.length).toFixed(2))
                 )
