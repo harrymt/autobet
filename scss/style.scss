@@ -133,7 +133,18 @@ table {
 }
 
 
+.success-colour,
+.default-colour {
+    border-left: 1px solid #fff;
+}
 
+.success-colour {
+    color: #8fff5a;
+}
+
+.default-colour {
+    color: #fff;
+}
 
 // Mobile
 @media (max-width: 500px) {
