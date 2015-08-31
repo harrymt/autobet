@@ -2,27 +2,32 @@
 $(function() {
     'use strict';
 
-    var T = 19; // Teams in League - 1
-    var LAS = 1.49; // League Attack Strength
-    var LDS = 1.1; // League Defence Strength (Was 1.16)
+    var config = {
+        T: 19, // Teams in League - 1
 
-    var GoalTarget = 2.5;
+        LAS: 1.49, // League Attack Strength
+        LDS: 1.1, // League Defence Strength (Was 1.16)
 
-    var HomeAvgGoals = 1.49;
-    var AwayAvgGoals = 1.11;
+        GoalTarget: 2.5,
+
+        HomeAvgGoals: 1.49,
+        AwayAvgGoals: 1.11,
+
+        DecimalPlaces: 3
+     };
 
     function getAttackStrength(goalsScored) {
-        return (goalsScored / T) / LAS;
+        return (goalsScored / config.T) / config.LAS;
     }
 
     function getDefenceStrength(goalsConceded) {
-        return (goalsConceded / T) / LDS;
+        return (goalsConceded / config.T) / config.LDS;
     }
 
     function getAwayTeamGoals(matches, hometeam, awayteam) {
         var hometeamStats = searchArray(matches, 'team', hometeam);
         var awayteamStats = searchArray(matches, 'team', awayteam);
-        return (awayteamStats.awayAttStr * hometeamStats.homeDefStr * AwayAvgGoals).toFixed(2);
+        return (awayteamStats.awayAttStr * hometeamStats.homeDefStr * config.AwayAvgGoals).toFixed(config.DecimalPlaces);
     }
 
     //
@@ -32,7 +37,7 @@ $(function() {
     function getHomeTeamGoals(matches, hometeam, awayteam) {
         var hometeamStats = searchArray(matches, 'team', hometeam);
         var awayteamStats = searchArray(matches, 'team', awayteam);
-        return (hometeamStats.homeAttStr * awayteamStats.awayDefStr * HomeAvgGoals).toFixed(2);
+        return (hometeamStats.homeAttStr * awayteamStats.awayDefStr * config.HomeAvgGoals).toFixed(config.DecimalPlaces);
     }
 
     function processResults(matches) {
@@ -65,10 +70,10 @@ $(function() {
                         homeConceded: Team.GoalsConcededHome,
                         awayScored: Team.GoalsScoredAway,
                         awayConceded: Team.GoalsConcededAway,
-                        homeAttStr: getAttackStrength(Team.GoalsScoredHome).toFixed(2),
-                        homeDefStr: getDefenceStrength(Team.GoalsConcededHome).toFixed(2),
-                        awayAttStr: getAttackStrength(Team.GoalsScoredAway).toFixed(2),
-                        awayDefStr: getDefenceStrength(Team.GoalsConcededAway).toFixed(2)
+                        homeAttStr: getAttackStrength(Team.GoalsScoredHome).toFixed(config.DecimalPlaces),
+                        homeDefStr: getDefenceStrength(Team.GoalsConcededHome).toFixed(config.DecimalPlaces),
+                        awayAttStr: getAttackStrength(Team.GoalsScoredAway).toFixed(config.DecimalPlaces),
+                        awayDefStr: getDefenceStrength(Team.GoalsConcededAway).toFixed(config.DecimalPlaces)
                     });
                 }
 
@@ -126,7 +131,7 @@ $(function() {
                         }
 
                         var OverXGoals = 'N';
-                        var XGoals = GoalTarget;
+                        var XGoals = config.GoalTarget;
                         if ( hometeamresult != '-' && awayteamresult != '-') {
                             if ((parseInt(hometeamresult) + parseInt(awayteamresult)) > XGoals) {
                                 OverXGoals = 'Y';
@@ -185,9 +190,9 @@ $(function() {
                 $('<th>').text('League Defence Strength')
             ),
             $('<tr>').append(
-                $('<td>').text(T),
-                $('<td>').text(LAS),
-                $('<td>').text(LDS)
+                $('<td>').text(config.T),
+                $('<td>').text(config.LAS),
+                $('<td>').text(config.LDS)
             )
         );
         $('#js-LHSoutput').append(keyTable);
@@ -201,9 +206,9 @@ $(function() {
             $('<th>').text('Away Scored'),
             $('<th>').text('Away Conceded'),
             $('<th>').text('Home Attack Str'),
-            $('<th>').text('Home Defence Str'),
+            $('<th>').text('Home Defence Weakness'),
             $('<th>').text('Away Attack Str'),
-            $('<th>').text('Away Defence Str'),
+            $('<th>').text('Away Defence Weakness'),
             $('<th>').text('% of matches with > 2.5 goals')
         );
 
@@ -302,9 +307,9 @@ $(function() {
                     $('<td>').text(''),
                     $('<td>').text(''),
                     $('<td>').text('Success'),
-                    // $('<td>').text((TotalCorrectScore / fs[i].matches.length).toFixed(2)),
-                    $('<td>').text((TotalCorrectResult / fs[i].matches.length).toFixed(2)),
-                    $('<td>').text((TotalCorrectOverOrUnder / fs[i].matches.length).toFixed(2))
+                    // $('<td>').text((TotalCorrectScore / fs[i].matches.length).toFixed(config.DecimalPlaces)),
+                    $('<td>').text((TotalCorrectResult / fs[i].matches.length).toFixed(config.DecimalPlaces)),
+                    $('<td>').text((TotalCorrectOverOrUnder / fs[i].matches.length).toFixed(config.DecimalPlaces))
                 )
             );
 
