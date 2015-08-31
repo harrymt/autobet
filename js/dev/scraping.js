@@ -13,7 +13,10 @@ $(function() {
         HomeAvgGoals: 1.49,
         AwayAvgGoals: 1.11,
 
-        DecimalPlaces: 3
+        DecimalPlaces: 3,
+
+        NumberOfYears: 2,
+        MergeYears: true // Combine data from every year & create an average / number of years
      };
 
     function getAttackStrength(goalsScored) {
@@ -52,7 +55,7 @@ $(function() {
     function fetchGoalStats(callback) {
         var matches = [];
 
-        // http://www.soccerstats.com/team_trends.asp?league=england&pmtype=average
+        // http://www.soccerstats.com/widetable.asp?league=england_2015
         var url = 'https://www.kimonolabs.com/api/7jzhc6fe?apikey=RbOBR2dkBMXKj1pxkxWWUYEJperNuBsv';
         return $.ajax({
             url: url,
@@ -62,19 +65,61 @@ $(function() {
                 for(var i = 0; i < response.results.Teams.length; i++) {
                     var Team = response.results.Teams[i];
 
-                    matches.push({
-                        lastrun: response.thisversionrun,
-                        team: Team.Team,
-                        gamesInWithOver2point5Goals: Team.GamesWithOver25Goals,
-                        homeScored: Team.GoalsScoredHome,
-                        homeConceded: Team.GoalsConcededHome,
-                        awayScored: Team.GoalsScoredAway,
-                        awayConceded: Team.GoalsConcededAway,
-                        homeAttStr: getAttackStrength(Team.GoalsScoredHome).toFixed(config.DecimalPlaces),
-                        homeDefStr: getDefenceStrength(Team.GoalsConcededHome).toFixed(config.DecimalPlaces),
-                        awayAttStr: getAttackStrength(Team.GoalsScoredAway).toFixed(config.DecimalPlaces),
-                        awayDefStr: getDefenceStrength(Team.GoalsConcededAway).toFixed(config.DecimalPlaces)
-                    });
+                    if (config.MergeYears) {
+                        var found_team = false;
+                        for (var m = 0; m < matches.length; m++) {
+                            console.log(Team.Team);
+                            console.log(matches[m].team);
+                            if (!found_team && matches[m].team == Team.Team) {
+                                matches[m].gamesInWithOver2point5Goals = (parseInt(Team.GamesWithOver25Goals.replace('%', '')) + parseInt(matches[m].gamesInWithOver2point5Goals)) / config.NumberOfYears;
+                                matches[m].homeScored = (parseInt(Team.GoalsScoredHome) + parseInt(matches[m].homeScored)) / config.NumberOfYears;
+                                matches[m].homeConceded = (parseInt(Team.GoalsConcededHome) + parseInt(matches[m].homeConceded)) / config.NumberOfYears;
+                                matches[m].awayScored = (parseInt(Team.GoalsScoredAway) + parseInt(matches[m].awayScored)) / config.NumberOfYears;
+                                matches[m].awayConceded = (parseInt(Team.GoalsConcededAway) + parseInt(matches[m].awayConceded)) / config.NumberOfYears;
+                                matches[m].homeAttStr = getAttackStrength(matches[m].homeScored).toFixed(config.DecimalPlaces);
+                                matches[m].homeDefStr = getDefenceStrength(matches[m].homeConceded).toFixed(config.DecimalPlaces);
+                                matches[m].awayAttStr = getAttackStrength(matches[m].awayScored).toFixed(config.DecimalPlaces);
+                                matches[m].awayDefStr = getDefenceStrength(matches[m].awayConceded).toFixed(config.DecimalPlaces);
+                                matches[m].year = '2015 & 2016';
+                                found_team = true;
+                            }
+                        }
+
+                        if (!found_team) {
+                            matches.push({
+                                lastrun: response.thisversionrun,
+                                team: Team.Team,
+                                gamesInWithOver2point5Goals: parseInt(Team.GamesWithOver25Goals.replace('%', '')),
+                                homeScored: parseInt(Team.GoalsScoredHome),
+                                homeConceded: parseInt(Team.GoalsConcededHome),
+                                awayScored: parseInt(Team.GoalsScoredAway),
+                                awayConceded: parseInt(Team.GoalsConcededAway),
+                                homeAttStr: parseInt(getAttackStrength(Team.GoalsScoredHome).toFixed(config.DecimalPlaces)),
+                                homeDefStr: parseInt(getDefenceStrength(Team.GoalsConcededHome).toFixed(config.DecimalPlaces)),
+                                awayAttStr: parseInt(getAttackStrength(Team.GoalsScoredAway).toFixed(config.DecimalPlaces)),
+                                awayDefStr: parseInt(getDefenceStrength(Team.GoalsConcededAway).toFixed(config.DecimalPlaces)),
+                                year: Team.url.substring(Team.url.length - 4) == '2014' ? '2015' : '2016'
+                            });
+                        }
+                    } else {
+                        var year_data = Team.url.substring(Team.url.length - 4) == '2014' ? '2015' : '2016';
+
+                        matches.push({
+                            lastrun: response.thisversionrun,
+                            team: Team.Team,
+                            gamesInWithOver2point5Goals: Team.GamesWithOver25Goals,
+                            homeScored: Team.GoalsScoredHome,
+                            homeConceded: Team.GoalsConcededHome,
+                            awayScored: Team.GoalsScoredAway,
+                            awayConceded: Team.GoalsConcededAway,
+                            homeAttStr: getAttackStrength(Team.GoalsScoredHome).toFixed(config.DecimalPlaces),
+                            homeDefStr: getDefenceStrength(Team.GoalsConcededHome).toFixed(config.DecimalPlaces),
+                            awayAttStr: getAttackStrength(Team.GoalsScoredAway).toFixed(config.DecimalPlaces),
+                            awayDefStr: getDefenceStrength(Team.GoalsConcededAway).toFixed(config.DecimalPlaces),
+                            year: year_data
+                        });
+
+                    }
                 }
 
                 callback(matches);
@@ -209,7 +254,8 @@ $(function() {
             $('<th>').text('Home Defence Weakness'),
             $('<th>').text('Away Attack Str'),
             $('<th>').text('Away Defence Weakness'),
-            $('<th>').text('% of matches with > 2.5 goals')
+            $('<th>').text('% of matches with > 2.5 goals'),
+            $('<th>').text('Year')
         );
 
         var table = $('<table>', { id: 'table-stats'}).append(tableHeader);
@@ -225,7 +271,8 @@ $(function() {
                 $('<td>').text(ms[i].homeDefStr),
                 $('<td>').text(ms[i].awayAttStr),
                 $('<td>').text(ms[i].awayDefStr),
-                $('<td>').text(ms[i].gamesInWithOver2point5Goals)
+                $('<td>').text(ms[i].gamesInWithOver2point5Goals),
+                $('<td>').text(ms[i].year)
             );
             table.append(tableRow);
         }
