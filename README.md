@@ -1,4 +1,6 @@
 autobet
 =======
 
-Bet automatically
+Bet automatically.
+
+http://www.harrymt.com/autobet
